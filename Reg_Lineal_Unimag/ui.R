@@ -6,7 +6,7 @@ library(plotly)
 shinyUI(pageWithSidebar(
   
   # Header:
-  headerPanel("Regresion lineal Simple"),
+  headerPanel("Regresion Lineal Simple-Unimag"),
   
   # Input del sidepanel:
   sidebarPanel(
@@ -42,8 +42,6 @@ shinyUI(pageWithSidebar(
                           #tabPanel("Negbin summary", verbatimTextOutput("nbsum")),
                           #tabPanel("Poisson anova",verbatimTextOutput("poisanova")),
                           #tabPanel("Negbin anova",verbatimTextOutput("nbanova")))
-               
-               
     )
   )
 ))

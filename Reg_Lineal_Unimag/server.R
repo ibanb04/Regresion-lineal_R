@@ -10,9 +10,9 @@ shinyServer(function(input, output) {
   
   Dataset <- reactive({
     if (is.null(input$file)) {
-      print("no hay datos")
-      # User has not uploaded a file yet
-      return(PorFavorSeleccionarArchivo)
+     
+      # si el usuario no ha subido el archivo
+      return(NULL)
     }
     #captura la tabla de datos
     Dataset <-as.data.frame(read.csv(input$file$datapath))
