@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "library(shiny)\nlibrary(ggplot2)\nlibrary(xtable)\nlibrary(plotly)\nlibrary(MASS)\nlibrary(Hmisc)\n\n\nshinyServer(function(input, output) {\n  \n  Dataset <- reactive({\n    if (is.null(input$file)) {\n      # User has not uploaded a file yet\n      return(PorFavorSeleccionarArchivo)\n    }\n    Dataset <-as.data.frame(read.csv(input$file$datapath))\n    return(Dataset)\n  })\n  \n  varnames<-reactive({names(Dataset())})\n  \n  linearmodel<-reactive({\n    x<-input$X\n    y<-input$Y\n    d<-Dataset()\n    tx<-sprintf(\"mod<-lm(data=d,%s~%s)\",y,x,x)\n    eval(parse(text=tx))\n    return(mod)\n  })\n  \n  quadmodel<-reactive({\n    x<-input$X\n    y<-input$Y\n    d<-Dataset()\n    tx<-sprintf(\"mod<-lm(data=d,%s~%s+I(%s^2))\",y,x,x)\n    eval(parse(text=tx))\n    return(mod)\n  })\n  \n  nbmodel<-reactive({\n    x<-input$X\n    y<-input$Y\n    d<-Dataset()\n    tx<-sprintf(\"mod<-glm.nb(data=d,%s~%s)\",y,x)\n    eval(parse(text=tx))\n    return(mod)\n  })\n  \n  poissonmodel<-reactive({\n    x<-input$X\n    y<-input$Y\n    d<-Dataset()\n    tx<-sprintf(\"mod<-glm(data=d,%s~%s,family=poisson)\",y,x)\n    eval(parse(text=tx))\n    return(mod)\n  })\n  \n  ggstart<-reactive({\n    x<-input$X\n    y<-input$Y\n    d<-Dataset()\n    tx<-sprintf(\"g0<-ggplot(data=d,aes(x=%s,y=%s))\",x,y)\n    eval(parse(text=tx))\n    return(g0)\n  })\n  \n  output$table <- renderDataTable(Dataset())\n  \n  output$lplot <- renderPlotly({\n    g0<-ggstart()\n    g1<-g0+geom_point() + geom_smooth(method=lm)+theme_bw()\n    ggplotly(g1)\n  })\n  \n\n  output$qplot <- renderPlotly({\n    g0<-ggstart()\n    g1<-g0+geom_point() + geom_smooth(method=\"lm\",formula=y~x+I(x^2), se=TRUE) +theme_bw()\n    ggplotly(g1)\n  })\n\n  output$dplot <- renderPlot({\n    mod<-linearmodel()\n    par(mfcol=c(2,2))\n    plot(mod)\n  })\n  \n  output$sumtable <- renderText({\n    mod<-linearmodel()\n    a<-summary(mod)\n    output$sum<-renderPrint(a)\n    print(xtable(a),type=\"html\")\n    \n  } )\n  \n  output$anova<-renderPrint(anova(linearmodel()))\n  \n  output$quadsum<-renderPrint(\n    {\n      mod<-quadmodel()\n      summary(mod)\n    })\n  output$quadanova<-renderPrint(\n    {\n      mod<-quadmodel()\n      anova(mod)\n    })\n  \n    output$antable <- renderText({\n    mod<-linearmodel()\n    a<-anova(mod)\n    print(xtable(a),type=\"html\")\n    \n  } )\n  \n  output$sumtext <- renderText({\n    x<-input$X\n    y<-input$Y\n    mod<-linearmodel()\n    a<-summary(mod)\n    int<-round(coef(mod)[1],4)\n    slope<-round(coef(mod)[2],4)\n    rsq<-round(a$r.squared,3)\n    sprintf(\"La linea de regresion es: %s = %s + %s %s -con un valor r cuadrado de %s\",y,int,slope,x,rsq)\n    \n  } )\n  output$X <- renderUI({ \n    selectInput(\"X\", \"Seleccione la variable independiente\", varnames())\n  })\n  output$Y <- renderUI({ \n    selectInput(\"Y\", \"Seleccione la variable dependiente\", varnames(),selected=varnames()[2])\n  })\n  \n  \n})",
+    "created" : 1510463785657.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1858073629",
+    "id" : "D45F3775",
+    "lastKnownWriteTime" : 1510463464,
+    "last_content_update" : 1510463464,
+    "path" : "~/GitHub/Regresion-lineal_R/server.R",
+    "project_path" : "server.R",
+    "properties" : {
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

@@ -12,10 +12,10 @@ shinyUI(pageWithSidebar(
   sidebarPanel(
     
     # Cargar archivos:
-    fileInput("file", "Subir el archivo CSV:"),
+    fileInput("file", "Subir el archivo .CSV :"),
     htmlOutput("X"),
     htmlOutput("Y")
-    
+   
   ),
   
   # funcion principal(Main):

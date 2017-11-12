@@ -10,81 +10,68 @@ shinyServer(function(input, output) {
   
   Dataset <- reactive({
     if (is.null(input$file)) {
+      print("no hay datos")
       # User has not uploaded a file yet
       return(PorFavorSeleccionarArchivo)
     }
+    #captura la tabla de datos
     Dataset <-as.data.frame(read.csv(input$file$datapath))
     return(Dataset)
   })
   
   varnames<-reactive({names(Dataset())})
-  
+  #retorna el modelo lineal
   linearmodel<-reactive({
     x<-input$X
     y<-input$Y
-    d<-Dataset()
-    tx<-sprintf("mod<-lm(data=d,%s~%s)",y,x,x)
+    datos<-Dataset()
+    tx<-sprintf("mod<-lm(data=datos,%s~%s)",y,x,x)
     eval(parse(text=tx))
     return(mod)
   })
-  
+  #modelo cuadratics
   quadmodel<-reactive({
     x<-input$X
     y<-input$Y
-    d<-Dataset()
-    tx<-sprintf("mod<-lm(data=d,%s~%s+I(%s^2))",y,x,x)
+    datos<-Dataset()
+   
+    tx<-sprintf("mod<-lm(data=datos,%s~%s+I(%s^2))",y,x,x)
     eval(parse(text=tx))
     return(mod)
   })
   
-  nbmodel<-reactive({
-    x<-input$X
-    y<-input$Y
-    d<-Dataset()
-    tx<-sprintf("mod<-glm.nb(data=d,%s~%s)",y,x)
-    eval(parse(text=tx))
-    return(mod)
-  })
-  
-  poissonmodel<-reactive({
-    x<-input$X
-    y<-input$Y
-    d<-Dataset()
-    tx<-sprintf("mod<-glm(data=d,%s~%s,family=poisson)",y,x)
-    eval(parse(text=tx))
-    return(mod)
-  })
-  
+ 
+  #funcion reactiva
   ggstart<-reactive({
     x<-input$X
     y<-input$Y
-    d<-Dataset()
-    tx<-sprintf("g0<-ggplot(data=d,aes(x=%s,y=%s))",x,y)
+    datos<-Dataset()
+    tx<-sprintf("g0<-ggplot(data=datos,aes(x=%s,y=%s))",x,y)
     eval(parse(text=tx))
     return(g0)
   })
-  
+  #muestra la tabla de datos
   output$table <- renderDataTable(Dataset())
-  
+  #grafica de la linea recta
   output$lplot <- renderPlotly({
     g0<-ggstart()
     g1<-g0+geom_point() + geom_smooth(method=lm)+theme_bw()
     ggplotly(g1)
   })
   
-
+  #grafica de la linea recta para funcion Quadratics
   output$qplot <- renderPlotly({
     g0<-ggstart()
     g1<-g0+geom_point() + geom_smooth(method="lm",formula=y~x+I(x^2), se=TRUE) +theme_bw()
     ggplotly(g1)
   })
-
+  #grafico de los diagnosticos y los supuestos
   output$dplot <- renderPlot({
     mod<-linearmodel()
     par(mfcol=c(2,2))
     plot(mod)
   })
-  
+  #summary de la regresion
   output$sumtable <- renderText({
     mod<-linearmodel()
     a<-summary(mod)
@@ -92,27 +79,30 @@ shinyServer(function(input, output) {
     print(xtable(a),type="html")
     
   } )
-  
+  #para pintar la anova
   output$anova<-renderPrint(anova(linearmodel()))
-  
+  #hace quadratic summary
   output$quadsum<-renderPrint(
     {
       mod<-quadmodel()
       summary(mod)
     })
+  #mostrar quadratic anova
   output$quadanova<-renderPrint(
     {
       mod<-quadmodel()
       anova(mod)
     })
   
-    output$antable <- renderText({
+  #hace la tabla anova  
+  output$antable <- renderText({
     mod<-linearmodel()
     a<-anova(mod)
     print(xtable(a),type="html")
     
   } )
   
+  #hace el modelo lineal
   output$sumtext <- renderText({
     x<-input$X
     y<-input$Y
@@ -121,9 +111,10 @@ shinyServer(function(input, output) {
     int<-round(coef(mod)[1],4)
     slope<-round(coef(mod)[2],4)
     rsq<-round(a$r.squared,3)
-    sprintf("La linea de regresion es %s = %s + %s %s with an r squared value of %s",y,int,slope,x,rsq)
+    sprintf("La linea de regresion es: %s = %s + %s %s -con un valor r cuadrado de %s",y,int,slope,x,rsq)
     
   } )
+  
   output$X <- renderUI({ 
     selectInput("X", "Seleccione la variable independiente", varnames())
   })

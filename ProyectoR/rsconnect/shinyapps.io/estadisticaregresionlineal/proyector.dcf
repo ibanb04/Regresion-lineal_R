@@ -1,0 +1,10 @@
+name: proyector
+title:
+username:
+account: estadisticaregresionlineal
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 234536
+bundleId: 1070886
+url: https://estadisticaregresionlineal.shinyapps.io/proyector/
+when: 1510464253.46027
