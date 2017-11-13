@@ -5,9 +5,9 @@ account: statisticsunimag
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 234708
-bundleId: 1071626
+bundleId: 1073358
 url: https://statisticsunimag.shinyapps.io/reglineal_unimagdalena/
-when: 1510518316.00638
+when: 1510600822.35629
 asMultiple: FALSE
 asStatic: FALSE
 ignoredFiles: biomasa.csv|prueba.csv

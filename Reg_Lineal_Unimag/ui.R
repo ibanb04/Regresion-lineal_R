@@ -14,8 +14,14 @@ shinyUI(pageWithSidebar(
     # Cargar archivos:
     fileInput("file", "Subir el archivo .CSV :"),
     htmlOutput("X"),
-    htmlOutput("Y")
+    htmlOutput("Y"),
+    h3("Delopeved by:"),
+    h4(" * Ricardo Pelaez."),
+    h4(" * Ivan Bettin."),
+    h4(" * Dairo Cantillo."),
+    h4(" * David Vargas."),
    
+    tags$img(src='EscudoUnimag.png',heigth=100,width=100)
   ),
   
   # funcion principal(Main):

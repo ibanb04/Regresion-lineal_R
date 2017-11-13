@@ -10,7 +10,7 @@ shinyServer(function(input, output) {
   
   Dataset <- reactive({
     if (is.null(input$file)) {
-     
+      h6("por favor cargue el archivo .CSV")
       # si el usuario no ha subido el archivo
       return(NULL)
     }
